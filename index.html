@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>비개발자를 위한 클로드코드 입문</title>
+<meta name="description" content="코드를 몰라도 괜찮습니다. AI와 대화하듯 나만의 프로그램을 만드는 방법, 클로드코드 입문 강의." />
+<style>
+  :root {
+    --bg: #faf8f5;
+    --bg-alt: #ffffff;
+    --ink: #1e1a17;
+    --ink-soft: #5c554d;
+    --accent: #cc7a52;
+    --accent-dark: #a85c39;
+    --accent-soft: #f3e2d6;
+    --border: #e7ded4;
+    --radius: 16px;
+    --max: 1080px;
+
+    --v1-bg: #ffe3d1;
+    --v1: #d9480f;
+    --v2-bg: #dbeeff;
+    --v2: #1c64c9;
+    --v3-bg: #dcf5e0;
+    --v3: #2f9e44;
+    --v4-bg: #ede0ff;
+    --v4: #7048c9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img, svg { display: block; max-width: 100%; }
+
+  a { color: inherit; text-decoration: none; }
+
+  .wrap {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250, 248, 245, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+  }
+
+  .logo {
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+  }
+
+  .nav-links a { transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent-dark); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(204, 122, 82, 0.28);
+  }
+  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent-dark); }
+
+  .nav .btn-primary { padding: 10px 20px; font-size: 0.85rem; }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+  }
+  .hamburger span {
+    width: 22px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 100px 0 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(204,122,82,0.14) 0%, transparent 70%);
+    top: -320px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 999px;
+    margin-bottom: 22px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero h1 .accent { color: var(--accent-dark); }
+
+  .hero p.lead {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: var(--ink-soft);
+    max-width: 620px;
+    margin: 0 auto 36px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-cta {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-cta .btn { padding: 15px 28px; font-size: 1rem; }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: clamp(20px, 6vw, 64px);
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stat-num {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--accent-dark);
+  }
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  /* ---------- Section shared ---------- */
+  section { padding: 88px 0; }
+
+  .section-head {
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 52px;
+  }
+
+  .eyebrow {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--accent-dark);
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .section-head h2 {
+    font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+
+  .section-head p { color: var(--ink-soft); font-size: 1rem; }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* ---------- Audience ---------- */
+  .audience-alt { background: var(--bg-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .a-card {
+    background: var(--v-bg);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    padding: 26px 20px;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .a-card:hover { transform: translateY(-4px); box-shadow: 0 12px 26px rgba(0,0,0,0.08); }
+
+  .a-card:nth-child(1) { --v-bg: var(--v2-bg); }
+  .a-card:nth-child(2) { --v-bg: var(--v1-bg); }
+  .a-card:nth-child(3) { --v-bg: var(--v3-bg); }
+  .a-card:nth-child(4) { --v-bg: var(--v4-bg); }
+
+  .a-card .emoji {
+    font-size: 1.6rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+  }
+  .a-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .a-card p { font-size: 0.86rem; color: var(--ink-soft); }
+
+  /* ---------- Features ---------- */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .f-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 30px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .f-card:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,0.06); }
+
+  .f-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--v-bg);
+    color: var(--v-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+  }
+
+  .f-card:nth-child(1) .f-icon { --v-bg: var(--v2-bg); --v-ink: var(--v2); }
+  .f-card:nth-child(2) .f-icon { --v-bg: var(--v1-bg); --v-ink: var(--v1); }
+  .f-card:nth-child(3) .f-icon { --v-bg: var(--v3-bg); --v-ink: var(--v3); }
+  .f-card:nth-child(4) .f-icon { --v-bg: var(--v4-bg); --v-ink: var(--v4); }
+
+  .f-card h3 { font-size: 1.08rem; font-weight: 700; margin-bottom: 8px; }
+  .f-card p { font-size: 0.92rem; color: var(--ink-soft); }
+
+  /* ---------- Curriculum ---------- */
+  .curriculum-alt { background: var(--bg-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+  .timeline { max-width: 700px; margin: 0 auto; }
+
+  .t-item {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 20px;
+    position: relative;
+    padding-bottom: 36px;
+  }
+  .t-item:last-child { padding-bottom: 0; }
+
+  .t-week {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--v-ink);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.72rem;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .t-week span { font-size: 1.05rem; }
+
+  .t-item:nth-child(1) .t-week { --v-ink: var(--v2); }
+  .t-item:nth-child(2) .t-week { --v-ink: var(--v1); }
+  .t-item:nth-child(3) .t-week { --v-ink: var(--v3); }
+  .t-item:nth-child(4) .t-week { --v-ink: var(--v4); }
+  .t-item:nth-child(5) .t-week { --v-ink: var(--v2); }
+  .t-item:nth-child(6) .t-week { --v-ink: var(--v1); }
+
+  .t-item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 31px;
+    top: 64px;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .t-content {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px;
+  }
+  .t-content h3 { font-size: 1.03rem; font-weight: 700; margin-bottom: 6px; }
+  .t-content p { font-size: 0.9rem; color: var(--ink-soft); }
+
+  /* ---------- FAQ ---------- */
+  .faq-list { max-width: 700px; margin: 0 auto; }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 22px 4px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .faq-q .icon {
+    font-size: 1.2rem;
+    color: var(--accent-dark);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .faq-item.open .faq-q .icon { transform: rotate(45deg); }
+
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .faq-a p {
+    padding: 0 4px 22px;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- CTA ---------- */
+  .cta-section {
+    background: linear-gradient(135deg, #cc7a52 0%, #a85c39 100%);
+    border-radius: 28px;
+    margin: 0 auto;
+    max-width: var(--max);
+    padding: 64px 40px;
+    text-align: center;
+    color: #fff;
+  }
+
+  .cta-section h2 {
+    font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+    font-weight: 800;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+  }
+  .cta-section p {
+    font-size: 1rem;
+    opacity: 0.92;
+    margin-bottom: 30px;
+  }
+  .cta-section .btn-primary {
+    background: #fff;
+    color: var(--accent-dark);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+  .cta-section .btn-primary:hover { background: #fff5ef; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: 40px 0 50px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+  }
+  footer .logo { justify-content: center; margin-bottom: 10px; color: var(--ink); }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 200;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 720px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .nav .btn-primary { display: none; }
+    .cta-section { padding: 48px 24px; border-radius: 20px; }
+  }
+
+  @media (max-width: 480px) {
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .stats { gap: 24px; }
+    .hero { padding: 76px 0 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav wrap">
+    <div class="logo"><span class="dot"></span>클로드코드 입문</div>
+    <div class="nav-links">
+      <a href="#audience">수강 대상</a>
+      <a href="#features">강의 특징</a>
+      <a href="#curriculum">커리큘럼</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button class="btn btn-primary" id="navApplyBtn">무료 설명회 신청</button>
+      <button class="hamburger" id="hamburgerBtn" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="badge">비개발자를 위한 실무 밀착 강의</span>
+      <h1>코드 한 줄 몰라도 괜찮습니다<br><span class="accent">AI와 대화하며</span> 내 프로그램을 만드세요</h1>
+      <p class="lead">
+        클로드코드(Claude Code)는 사람이 쓰던 자연어 그대로 지시하면 코드를 작성해주는 AI 도구입니다.
+        기획자, 마케터, 자영업자, 직장인 누구나 6주 안에 나만의 도구와 서비스를 직접 만들 수 있습니다.
+      </p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" id="heroApplyBtn">무료 설명회 신청하기</button>
+        <a href="#curriculum" class="btn btn-ghost">커리큘럼 살펴보기</a>
+      </div>
+      <div class="stats">
+        <div>
+          <div class="stat-num" data-target="6">0</div>
+          <div class="stat-label">주 완성 커리큘럼</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="0" data-suffix="줄">0</div>
+          <div class="stat-label">필요한 코딩 지식</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="100" data-suffix="%">0</div>
+          <div class="stat-label">실습 중심 커리큘럼</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="98" data-suffix="%">0</div>
+          <div class="stat-label">수강생 만족도</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Audience -->
+  <section class="audience-alt" id="audience">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Who</div>
+        <h2>이런 분들께 추천합니다</h2>
+        <p>개발 경험이 전혀 없어도 상관없습니다. "이런 걸 만들어봤으면" 하는 마음만 있으면 충분해요.</p>
+      </div>
+      <div class="grid-4 reveal">
+        <div class="a-card">
+          <div class="emoji">🧭</div>
+          <h3>기획자 · 마케터</h3>
+          <p>아이디어를 프로토타입으로 빠르게 검증하고 싶은 분</p>
+        </div>
+        <div class="a-card">
+          <div class="emoji">🚀</div>
+          <h3>창업 준비생</h3>
+          <p>외주 없이 MVP를 직접 만들어보고 싶은 분</p>
+        </div>
+        <div class="a-card">
+          <div class="emoji">💼</div>
+          <h3>사무직 직장인</h3>
+          <p>반복 업무를 자동화하는 나만의 도구가 필요한 분</p>
+        </div>
+        <div class="a-card">
+          <div class="emoji">🎨</div>
+          <h3>프리랜서 · 1인 사업자</h3>
+          <p>홈페이지, 포트폴리오를 직접 만들고 관리하고 싶은 분</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Why</div>
+        <h2>이 강의만의 특징</h2>
+        <p>어렵고 딱딱한 개발 강의가 아닙니다. AI와 함께 만들며 배우는 실전 워크숍입니다.</p>
+      </div>
+      <div class="grid-2 reveal">
+        <div class="f-card">
+          <div class="f-icon">💬</div>
+          <h3>말로 하는 코딩</h3>
+          <p>"이런 화면을 만들어줘"처럼 원하는 것을 말로 설명하면 클로드코드가 실제 코드를 작성합니다. 문법 암기는 필요 없습니다.</p>
+        </div>
+        <div class="f-card">
+          <div class="f-icon">🛠️</div>
+          <h3>결과물 중심 실습</h3>
+          <p>매주 하나의 결과물을 완성합니다. 6주 뒤에는 소개 페이지, 자동화 도구, 나만의 웹앱까지 직접 만든 포트폴리오가 생깁니다.</p>
+        </div>
+        <div class="f-card">
+          <div class="f-icon">🧩</div>
+          <h3>단계별 눈높이 설계</h3>
+          <p>컴퓨터 활용에 익숙하지 않아도 따라올 수 있도록 개념 하나하나를 실생활 비유로 풀어 설명합니다.</p>
+        </div>
+        <div class="f-card">
+          <div class="f-icon">👥</div>
+          <h3>소규모 밀착 케어</h3>
+          <p>소수 정원으로 운영되어 막히는 부분마다 바로 질문하고 피드백을 받을 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Curriculum -->
+  <section class="curriculum-alt" id="curriculum">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Curriculum</div>
+        <h2>6주 완성 커리큘럼</h2>
+        <p>기초 개념부터 나만의 결과물 완성까지, 순서대로 따라오면 됩니다.</p>
+      </div>
+      <div class="timeline reveal">
+        <div class="t-item">
+          <div class="t-week">1<span>주</span></div>
+          <div class="t-content">
+            <h3>AI 코딩이란 무엇인가</h3>
+            <p>클로드코드의 개념과 작동 원리를 이해하고, 나만의 개발 환경을 준비합니다.</p>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-week">2<span>주</span></div>
+          <div class="t-content">
+            <h3>대화로 첫 결과물 만들기</h3>
+            <p>간단한 소개 웹페이지를 클로드코드와 대화하며 처음부터 끝까지 완성해봅니다.</p>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-week">3<span>주</span></div>
+          <div class="t-content">
+            <h3>원하는 대로 수정하는 법</h3>
+            <p>디자인과 기능을 요청하고 수정하는 프롬프트 작성법을 익힙니다.</p>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-week">4<span>주</span></div>
+          <div class="t-content">
+            <h3>업무 자동화 도구 만들기</h3>
+            <p>엑셀 정리, 반복 문서 작업 등 실무에 바로 쓰는 자동화 도구를 제작합니다.</p>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-week">5<span>주</span></div>
+          <div class="t-content">
+            <h3>나만의 웹서비스 기획 &amp; 제작</h3>
+            <p>아이디어를 정리해 간단한 웹앱 형태로 직접 구현해봅니다.</p>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-week">6<span>주</span></div>
+          <div class="t-content">
+            <h3>결과물 발표 &amp; 다음 단계</h3>
+            <p>완성한 결과물을 공유하고, 이후 스스로 학습을 이어갈 방법을 안내합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">FAQ</div>
+        <h2>자주 묻는 질문</h2>
+      </div>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button class="faq-q">
+            <span>정말 코딩을 전혀 몰라도 되나요?</span>
+            <span class="icon">＋</span>
+          </button>
+          <div class="faq-a"><p>네. 이 강의는 프로그래밍 경험이 없는 분들을 대상으로 설계되었습니다. 컴퓨터로 문서 작업, 인터넷 검색 정도만 할 수 있으면 충분합니다.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">
+            <span>수업은 온라인인가요, 오프라인인가요?</span>
+            <span class="icon">＋</span>
+          </button>
+          <div class="faq-a"><p>온라인 실시간 강의로 진행되며, 다시보기 영상을 제공해 일정이 맞지 않는 날에도 학습을 이어갈 수 있습니다.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">
+            <span>노트북 사양이 낮아도 수강할 수 있나요?</span>
+            <span class="icon">＋</span>
+          </button>
+          <div class="faq-a"><p>일반 사무용 노트북이면 충분합니다. 필요한 프로그램 설치와 설정은 1주차에 함께 진행합니다.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">
+            <span>수강 후에는 어떤 걸 만들 수 있게 되나요?</span>
+            <span class="icon">＋</span>
+          </button>
+          <div class="faq-a"><p>소개 웹페이지, 업무 자동화 도구, 간단한 웹서비스까지 총 세 가지 이상의 결과물을 직접 완성하게 됩니다.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="apply">
+    <div class="cta-section reveal">
+      <h2>이번 기수, 소수 정원으로 진행됩니다</h2>
+      <p>지금 무료 설명회를 신청하고 나만의 첫 결과물을 만들어보세요.</p>
+      <button class="btn btn-primary" id="ctaApplyBtn">무료 설명회 신청하기</button>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="logo"><span class="dot"></span>클로드코드 입문</div>
+    <p>© 2026 비개발자를 위한 클로드코드 입문. All rights reserved.</p>
+  </div>
+</footer>
+
+<div class="toast" id="ccToast">신청이 접수되었습니다. 곧 안내드릴게요!</div>
+
+<script>
+  // Mobile menu toggle
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const navLinks = document.querySelector('.nav-links');
+  hamburgerBtn.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('mobile-open');
+    if (isOpen) {
+      navLinks.style.display = 'flex';
+      navLinks.style.position = 'absolute';
+      navLinks.style.top = '68px';
+      navLinks.style.left = '0';
+      navLinks.style.right = '0';
+      navLinks.style.flexDirection = 'column';
+      navLinks.style.background = 'var(--bg-alt)';
+      navLinks.style.padding = '20px 24px';
+      navLinks.style.borderBottom = '1px solid var(--border)';
+      navLinks.style.gap = '16px';
+    } else {
+      navLinks.style.display = 'none';
+    }
+  });
+
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('mobile-open');
+      navLinks.style.display = '';
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    q.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(open => {
+        if (open !== item) {
+          open.classList.remove('open');
+          open.querySelector('.faq-a').style.maxHeight = null;
+        }
+      });
+      if (isOpen) {
+        item.classList.remove('open');
+        a.style.maxHeight = null;
+      } else {
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // Stat counter animation
+  const statEls = document.querySelectorAll('.stat-num');
+  let statsAnimated = false;
+  function animateStats() {
+    if (statsAnimated) return;
+    statsAnimated = true;
+    statEls.forEach(el => {
+      const target = parseInt(el.dataset.target, 10);
+      const suffix = el.dataset.suffix || '';
+      const duration = 900;
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const value = Math.round(target * progress);
+        el.textContent = value + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateStats();
+        statsObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.4 });
+  statsObserver.observe(document.querySelector('.stats'));
+
+  // Apply buttons -> toast feedback (placeholder for real form/link)
+  const toastEl = document.getElementById('ccToast');
+  function showToast() {
+    toastEl.classList.add('show');
+    setTimeout(() => toastEl.classList.remove('show'), 2600);
+  }
+  ['navApplyBtn', 'heroApplyBtn', 'ctaApplyBtn'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.addEventListener('click', showToast);
+  });
+</script>
+
+</body>
+</html>
